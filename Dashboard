@@ -1,1 +1,500 @@
+[
+    {
+        "id": "health_dashboard_main",
+        "type": "tab",
+        "label": "Elderly Care System",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "user_form",
+        "type": "ui_form",
+        "z": "health_dashboard_main",
+        "name": "Setup Profile",
+        "label": "กรอกข้อมูลผู้สูงอายุ",
+        "group": "ui_group_profile",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "อายุ (ปี)",
+                "value": "age",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "น้ำหนัก (kg)",
+                "value": "weight",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ส่วนสูง (cm)",
+                "value": "height",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ปัสสาวะ(ml)",
+                "value": "urine",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "age": "",
+            "weight": "",
+            "height": "",
+            "urine": ""
+        },
+        "payload": "",
+        "submit": "บันทึกและคำนวณ",
+        "cancel": "ล้างข้อมูล",
+        "topic": "profile_update",
+        "topicType": "str",
+        "splitLayout": false,
+        "className": "",
+        "x": 140,
+        "y": 100,
+        "wires": [
+            [
+                "save_profile"
+            ]
+        ]
+    },
+    {
+        "id": "save_profile",
+        "type": "function",
+        "z": "health_dashboard_main",
+        "name": "Save & Trigger",
+        "func": "flow.set('userProfile', msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 100,
+        "wires": [
+            [
+                "main_processor",
+                "d05c81d0a0d71baf"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_temp_in",
+        "type": "mqtt in",
+        "z": "health_dashboard_main",
+        "name": "Board 2 Temp",
+        "topic": "room/temp",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0396c2c9339809f4",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 110,
+        "y": 300,
+        "wires": [
+            [
+                "store_temp"
+            ]
+        ]
+    },
+    {
+        "id": "store_temp",
+        "type": "function",
+        "z": "health_dashboard_main",
+        "name": "Store Global Temp",
+        "func": "global.set('current_temp', parseFloat(msg.payload));\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 300,
+        "wires": [
+            [
+                "main_processor"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_water_in",
+        "type": "mqtt in",
+        "z": "health_dashboard_main",
+        "name": "Board 1 Water",
+        "topic": "glass/drunk_event",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "0396c2c9339809f4",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 110,
+        "y": 380,
+        "wires": [
+            [
+                "accumulate_water"
+            ]
+        ]
+    },
+    {
+        "id": "accumulate_water",
+        "type": "function",
+        "z": "health_dashboard_main",
+        "name": "Daily Accumulator",
+        "func": "let today = new Date().toLocaleDateString();\nlet data = flow.get('waterStorage') || { date: today, total: 0 };\n\nif (data.date !== today) data = { date: today, total: 0 };\n\ndata.total += parseFloat(msg.payload);\nflow.set('waterStorage', data);\nflow.set('waterDrunkToday', data.total);\n\nmsg.payload = data.total;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 380,
+        "wires": [
+            [
+                "main_processor"
+            ]
+        ]
+    },
+    {
+        "id": "main_processor",
+        "type": "function",
+        "z": "health_dashboard_main",
+        "name": "Main Logic Engine",
+        "func": "let user = flow.get('userProfile') || {};\nlet temp = global.get('current_temp') || 25;\nlet drunk = flow.get('waterDrunkToday') || 0;\nlet urine = parseFloat(user.urine) || 0; // รับค่าปัสสาวะจาก Profile\n\nif (!user.weight) return null;\n\n// 1. คำนวณค่าพื้นฐาน (Base)\nlet target = user.weight * 35;\n\n// 2. ตัวคูณตามช่วงอายุ\nif (user.age > 55) target *= 0.90;\nelse if (user.age >= 30) target *= 0.95;\n\n// 3. ปรับค่าตามโรคประจำตัวและปริมาณปัสสาวะ (เงื่อนไขใหม่)\nlet ds = user.diseases || \"\";\n\nif (ds === '1') {\n    target = urine + 500; // สูตรเฉพาะ: ปัสสาวะ + 500 ml\n} \nelse if (ds === '2') {\n    target *= 1.2; // เพิ่มปริมาณน้ำ 20%\n} \nelse if (ds === '3') {\n    target += 750; // ค่ากลางระหว่าง +500 ถึง +1000\n} \nelse if (ds === '4') {\n    target += 1000; // เพิ่ม 1 ลิตรเพื่อขับนิ่ว\n}\n\n// 4. ตัวคูณตามอุณหภูมิห้อง (Board 2)\nif (temp > 30) target *= 1.17;\nelse if (temp >= 20) target *= 1.05;\n\n// 5. สรุปผลสถานะ\nlet percent = ((drunk / target) * 100).toFixed(1);\nlet alert = (temp > 32 && percent < 30);\n\nmsg.payload = {\n    target: (target / 1000).toFixed(2)\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 1,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 240,
+        "wires": [
+            [
+                "ui_gauge",
+                "alert_logic",
+                "57b9fba0337ff55c"
+            ]
+        ]
+    },
+    {
+        "id": "alert_logic",
+        "type": "switch",
+        "z": "health_dashboard_main",
+        "name": "Is High Risk?",
+        "property": "payload.alert",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 810,
+        "y": 200,
+        "wires": [
+            [
+                "time_filter"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_buzzer_out",
+        "type": "mqtt out",
+        "z": "health_dashboard_main",
+        "name": "Buzzer Board 2",
+        "topic": "room/buzzer",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "0396c2c9339809f4",
+        "x": 1250,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "mute_button",
+        "type": "ui_button",
+        "z": "health_dashboard_main",
+        "name": "Stop Alarm",
+        "group": "ui_group_status",
+        "order": 3,
+        "width": "",
+        "height": "",
+        "passthru": false,
+        "label": "หยุดเสียงแจ้งเตือน (Mute)",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "red",
+        "className": "",
+        "icon": "volume_off",
+        "payload": "0",
+        "payloadType": "str",
+        "topic": "room/buzzer",
+        "topicType": "str",
+        "x": 1110,
+        "y": 320,
+        "wires": [
+            [
+                "mqtt_buzzer_out"
+            ]
+        ]
+    },
+    {
+        "id": "ui_gauge",
+        "type": "ui_gauge",
+        "z": "health_dashboard_main",
+        "name": "Water Gauge",
+        "group": "ui_group_status",
+        "order": 1,
+        "width": "",
+        "height": "",
+        "gtype": "gage",
+        "title": "",
+        "label": "ปริมาณน้ำที่ดื่มไปแล้ว (%)",
+        "format": "{{value}}%",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 840,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "time_filter",
+        "type": "time-range-switch",
+        "z": "health_dashboard_main",
+        "name": "06:00 - 22:00 Only",
+        "lat": "13.84635",
+        "lon": "100.56841",
+        "startTime": "06:00",
+        "endTime": "22:00",
+        "startOffset": "",
+        "endOffset": "",
+        "x": 1030,
+        "y": 200,
+        "wires": [
+            [
+                "mqtt_buzzer_out"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "d05c81d0a0d71baf",
+        "type": "ui_text",
+        "z": "health_dashboard_main",
+        "group": "ui_group_status",
+        "order": 2,
+        "width": 6,
+        "height": 2,
+        "name": "Summary Display",
+        "label": "ต้องกินน้ำ",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 610,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "b72ad1bb5a34bd2a",
+        "type": "ui_dropdown",
+        "z": "health_dashboard_main",
+        "name": "",
+        "label": "โรคประจำตัว",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "ui_group_profile",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "โรคไตวายเรื้อรัง",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "ติดเชื้อในระบบทางเดินปัสสาวะ",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "โรคเบาหวาน",
+                "value": 3,
+                "type": "num"
+            },
+            {
+                "label": "โรคนิ่วในไต",
+                "value": 4,
+                "type": "num"
+            },
+            {
+                "label": "ไม่มี",
+                "value": 5,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "save_profile"
+            ]
+        ]
+    },
+    {
+        "id": "ad5e351ce7ef8821",
+        "type": "ui_dropdown",
+        "z": "health_dashboard_main",
+        "name": "",
+        "label": "เพศ",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "ui_group_profile",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "ชาย",
+                "value": "male",
+                "type": "str"
+            },
+            {
+                "label": "หญิง",
+                "value": "female",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "save_profile"
+            ]
+        ]
+    },
+    {
+        "id": "57b9fba0337ff55c",
+        "type": "ui_text",
+        "z": "health_dashboard_main",
+        "group": "ui_group_profile",
+        "order": 4,
+        "width": 6,
+        "height": 2,
+        "name": "Summary Display",
+        "label": "ต้องกินน้ำ",
+        "format": "{{msg.payload}}",
+        "layout": "row-right",
+        "className": "",
+        "style": true,
+        "font": "",
+        "fontSize": "14",
+        "color": "#ff000d",
+        "x": 830,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "ui_group_profile",
+        "type": "ui_group",
+        "name": "ข้อมูลผู้ใช้ (Patient Profile)",
+        "tab": "ui_tab_main",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "0396c2c9339809f4",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "iot.cpe.ku.ac.th",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ui_group_status",
+        "type": "ui_group",
+        "name": "สถานะปัจจุบัน",
+        "tab": "ui_tab_main",
+        "order": 2,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "ui_tab_main",
+        "type": "ui_tab",
+        "name": "Elderly Water Monitor",
+        "icon": "dashboard",
+        "order": 1
+    }
+]
 
