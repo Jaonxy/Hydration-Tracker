@@ -1,15 +1,15 @@
 [
     {
-        "id": "37d810e1272bdb67",
+        "id": "56c675a926d60f6e",
         "type": "tab",
         "label": "Elderly Water System V2",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "e902fc24a5681cb3",
+        "id": "3fa85d9a11698f17",
         "type": "ui_button",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Normal Mode",
         "group": "ui_group_profile",
         "order": 1,
@@ -30,14 +30,14 @@
         "y": 40,
         "wires": [
             [
-                "1388fe470c67d1c7"
+                "af68c2b5cdc61946"
             ]
         ]
     },
     {
-        "id": "a00ed215264d56be",
+        "id": "df8be1ee4f583a26",
         "type": "ui_button",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Sick Mode",
         "group": "ui_group_profile",
         "order": 2,
@@ -58,14 +58,14 @@
         "y": 80,
         "wires": [
             [
-                "1388fe470c67d1c7"
+                "af68c2b5cdc61946"
             ]
         ]
     },
     {
-        "id": "68bdd183f8b95861",
+        "id": "26f2a81852332ff4",
         "type": "ui_form",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Setup Profile",
         "label": "กรอกข้อมูลพื้นฐาน (สำหรับโหมดผู้ป่วย)",
         "group": "ui_group_profile",
@@ -119,14 +119,14 @@
         "y": 140,
         "wires": [
             [
-                "1388fe470c67d1c7"
+                "af68c2b5cdc61946"
             ]
         ]
     },
     {
-        "id": "1aece059ea09eb23",
+        "id": "b201edd6eb627efa",
         "type": "ui_dropdown",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Gender",
         "label": "เพศ",
         "tooltip": "",
@@ -157,14 +157,14 @@
         "y": 180,
         "wires": [
             [
-                "1388fe470c67d1c7"
+                "af68c2b5cdc61946"
             ]
         ]
     },
     {
-        "id": "be31b3ba007e4f45",
+        "id": "d9baa5cc483e20eb",
         "type": "ui_dropdown",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Diseases",
         "label": "โรคประจำตัว",
         "tooltip": "",
@@ -210,14 +210,14 @@
         "y": 240,
         "wires": [
             [
-                "1388fe470c67d1c7"
+                "af68c2b5cdc61946"
             ]
         ]
     },
     {
-        "id": "1388fe470c67d1c7",
+        "id": "af68c2b5cdc61946",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Save & Merge Profile",
         "func": "let profile = flow.get('userProfile') || {};\nif (msg.topic === 'form_data') {\n    profile = { ...profile, ...msg.payload };\n} else if (msg.topic === 'sex') {\n    profile.sex = msg.payload;\n} else if (msg.topic === 'diseases') {\n    profile.diseases = msg.payload;\n} else if (msg.topic === 'health_status') {\n    profile.healthStatus = msg.payload;\n}\nflow.set('userProfile', profile);\nmsg.payload = profile;\nreturn msg;",
         "outputs": 1,
@@ -230,14 +230,14 @@
         "y": 140,
         "wires": [
             [
-                "fc96bbd8100e2d76"
+                "49fd19ddc9644d7f"
             ]
         ]
     },
     {
-        "id": "9fe30ce6e56a783c",
+        "id": "cc59a293ed93948e",
         "type": "mqtt in",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Board 2 Temp",
         "topic": "b6810504044/room/temp",
         "qos": "2",
@@ -250,14 +250,14 @@
         "y": 340,
         "wires": [
             [
-                "0418f00fde8f417c"
+                "11b51d109348f938"
             ]
         ]
     },
     {
-        "id": "acbf30735b4aed00",
+        "id": "720bb63476ecc229",
         "type": "mqtt in",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Board 2 Humid",
         "topic": "b6810504044/room/humid",
         "qos": "2",
@@ -270,14 +270,14 @@
         "y": 400,
         "wires": [
             [
-                "cb099aefd4d62c5e"
+                "21b827c5bf23d2f1"
             ]
         ]
     },
     {
-        "id": "0418f00fde8f417c",
+        "id": "11b51d109348f938",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Store Temp",
         "func": "global.set('current_temp', parseFloat(msg.payload));\nreturn msg;",
         "outputs": 1,
@@ -285,15 +285,15 @@
         "y": 360,
         "wires": [
             [
-                "fc96bbd8100e2d76",
-                "634a35ac3a8ec476"
+                "49fd19ddc9644d7f",
+                "85c0f7e612f5c21f"
             ]
         ]
     },
     {
-        "id": "cb099aefd4d62c5e",
+        "id": "21b827c5bf23d2f1",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Store Humid",
         "func": "global.set('current_humid', parseFloat(msg.payload));\nreturn msg;",
         "outputs": 1,
@@ -301,14 +301,14 @@
         "y": 400,
         "wires": [
             [
-                "c8d8c4af862d3f1d"
+                "291d06e4c9be78d5"
             ]
         ]
     },
     {
-        "id": "affc4956d1b12c3f",
+        "id": "c52b7be353ac38ae",
         "type": "mqtt in",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Board 1 Water",
         "topic": "glass/drunk_event",
         "qos": "2",
@@ -321,16 +321,16 @@
         "y": 460,
         "wires": [
             [
-                "52a1b2bb857fed0b"
+                "d67278a954da8175"
             ]
         ]
     },
     {
-        "id": "52a1b2bb857fed0b",
+        "id": "d67278a954da8175",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Daily & Hourly Accumulator",
-        "func": "let currentHour = new Date().getHours();\nlet currentDay = new Date().getDate(); \n\n// Create a \"Logical Day\" that only changes at 06:00 AM\n// If it is 2:00 AM, it still counts as \"yesterday\"\nlet logicalDay = (currentHour < 6) ? currentDay - 1 : currentDay;\n\nlet amount = parseFloat(msg.payload) || 0;\n\n// 1. Fetch current tracking data to prevent spam/glitches\nlet tracking = flow.get('waterTracking');\nlet maxAllowed = Infinity; \n\nif (tracking && tracking.targetPerHour) {\n    maxAllowed = tracking.targetPerHour * 3; // 300% ceiling\n}\n\n// 2. Hourly Tracking\nlet hourlyData = flow.get('hourlyWater') || { hour: currentHour, total: 0 };\nif (hourlyData.hour !== currentHour) {\n    hourlyData = { hour: currentHour, total: 0 };\n}\n\n// Ignore data if it exceeds humanly possible drinking amounts (glitch filter)\nif (hourlyData.total + amount > maxAllowed) {\n    return null; \n}\n\nhourlyData.total += amount;\nflow.set('hourlyWater', hourlyData);\n\n// 3. Daily Tracking (Resets at 6:00 AM)\nlet dailyData = flow.get('dailyWater') || { logicalDay: logicalDay, total: 0 };\nif (dailyData.logicalDay !== logicalDay) {\n    dailyData = { logicalDay: logicalDay, total: 0 }; // Reset for the new day\n}\n\ndailyData.total += amount;\nflow.set('dailyWater', dailyData);\nflow.set('waterDrunkToday', dailyData.total);\n\n// 4. Send Outputs\nlet msg1 = { payload: dailyData.total }; \nlet msg2 = { payload: hourlyData.total, topic: \"ปริมาณ (ml)\" }; \nlet msg3 = { payload: dailyData.total, topic: \"ปริมาณ (ml)\" }; \n\nreturn [msg1, msg2, msg3];",
+        "func": "let currentHour = new Date().getHours();\n\n// 1. SAFE LOGICAL DAY FIX (Handles months properly)\nlet d = new Date();\nd.setHours(d.getHours() - 6);\nlet logicalDay = d.getDate();\n\nlet amount = parseFloat(msg.payload) || 0;\n\n// 2. Original Glitch Filter (Reverted to 300% limit)\nlet tracking = flow.get('waterTracking') || { targetPerHour: 100 }; // Fallback value\nlet maxAllowed = tracking.targetPerHour * 3;\n\nif (amount <= 0 || amount > maxAllowed) {\n    return null; \n}\n\n// 3. Hourly Tracking\nlet hourlyData = flow.get('hourlyWater') || { hour: currentHour, total: 0 };\nif (hourlyData.hour !== currentHour) {\n    hourlyData = { hour: currentHour, total: 0 };\n}\n\nhourlyData.total += amount;\nflow.set('hourlyWater', hourlyData);\n\n// 4. Daily Tracking (Resets at 6:00 AM)\nlet dailyData = flow.get('dailyWater') || { logicalDay: logicalDay, total: 0 };\nif (dailyData.logicalDay !== logicalDay) {\n    dailyData = { logicalDay: logicalDay, total: 0 }; \n}\n\ndailyData.total += amount;\nflow.set('dailyWater', dailyData);\nflow.set('waterDrunkToday', dailyData.total);\n\n// 5. Send Outputs\nlet msg1 = { payload: dailyData.total }; \nlet msg2 = { payload: hourlyData.total, topic: \"ปริมาณ (ml)\" }; \nlet msg3 = { payload: dailyData.total, topic: \"ปริมาณ (ml)\" }; \n\nreturn [msg1, msg2, msg3];",
         "outputs": 3,
         "timeout": "",
         "noerr": 0,
@@ -341,20 +341,20 @@
         "y": 460,
         "wires": [
             [
-                "fc96bbd8100e2d76"
+                "49fd19ddc9644d7f"
             ],
             [
-                "a2ce0c1bcebc1409"
+                "4d40a08d43e32e68"
             ],
             [
-                "f31155c6df06569b"
+                "3bb7fb6bddec4d13"
             ]
         ]
     },
     {
-        "id": "a2ce0c1bcebc1409",
+        "id": "4d40a08d43e32e68",
         "type": "ui_chart",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Hourly Water",
         "group": "caa578058f4da87f",
         "order": 1,
@@ -396,9 +396,9 @@
         ]
     },
     {
-        "id": "f31155c6df06569b",
+        "id": "3bb7fb6bddec4d13",
         "type": "ui_chart",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Daily Water",
         "group": "caa578058f4da87f",
         "order": 2,
@@ -440,11 +440,11 @@
         ]
     },
     {
-        "id": "fc96bbd8100e2d76",
+        "id": "49fd19ddc9644d7f",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Main Logic Engine",
-        "func": "let user = flow.get('userProfile') || {};\nlet temp = global.get('current_temp') || 25;\nlet drunk = flow.get('waterDrunkToday') || 0;\n\nif (!user.healthStatus) return null;\n\n// 1. Setup Time Range (06:00 - 22:00)\nlet startHour = 6;\nlet endHour = 22;\nlet currentHour = new Date().getHours();\n\nlet inTimeRange = false;\nif (startHour < endHour) {\n    inTimeRange = (currentHour >= startHour && currentHour < endHour);\n} else {\n    inTimeRange = (currentHour >= startHour || currentHour < endHour);\n}\n\n// 2. Daily Target Calculation (BASED ON NEW TABLE)\nlet target = 0;\n\nif (user.healthStatus === 'normal') {\n    target = 2500;\n} else {\n    let weight = parseFloat(user.weight);\n    if (!weight || weight <= 0) return null;\n\n    // A. Base Requirement (35 ml * weight)\n    let baseTarget = weight * 35;\n    target = baseTarget;\n\n    let ds = parseInt(user.diseases) || 5;\n\n    // B. Disease / Health Overrides & Base Adjustments\n    if (ds === 5) {\n        // Healthy -> flat 2.5L\n        target = 2500;\n    } else if (ds === 1) {\n        // Kidney disease -> ปัสสาวะที่ออก + 500ml\n        let urine = parseFloat(user.urine) || 0;\n        target = urine + 500;\n    } else {\n        // Only apply Age & BMI if the user is NOT \"Healthy (Flat 2.5L)\" and NOT \"Kidney (Urine+500)\"\n\n        // Age Multiplier\n        let age = parseInt(user.age) || 0;\n        if (age >= 30 && age <= 55) target *= 0.95;\n        else if (age > 55) target *= 0.90;\n\n        // BMI Multiplier\n        let heightCm = parseFloat(user.height) || 0;\n        if (heightCm > 0) {\n            let heightM = heightCm / 100;\n            let bmi = weight / (heightM * heightM); // BMI = kg / m^2\n\n            if (bmi < 18.5) target *= 1.05;            // Underweight\n            else if (bmi >= 25 && bmi < 30) target *= 0.95; // Overweight\n            else if (bmi >= 30) target *= 0.90;        // Obese\n        }\n\n        // Disease Additions\n        if (ds === 3) {\n            // Diabetes -> + 500ml\n            target += 500;\n        } else if (ds === 2 || ds === 4) {\n            // UTI / Stones (นิ่ว) -> + 20% ของค่าพื้นฐาน (20% of Base Requirement)\n            target += (baseTarget * 0.20);\n        }\n    }\n\n    // C. Room Temperature Multiplier (Applies to final calculated amount)\n    if (temp >= 20 && temp <= 25) target *= 1.05;\n    else if (temp >= 26 && temp <= 30) target *= 1.10;\n    else if (temp > 30) target *= 1.15; // Using 1.15 for >30°C\n}\n\n// 3. Hourly Tracking & Adjustments\nlet totalActiveHours = (endHour > startHour) ? (endHour - startHour) : (24 - startHour + endHour);\nif (totalActiveHours <= 0) totalActiveHours = 16;\n\nlet tracking = flow.get('waterTracking') || {\n    lastHour: currentHour,\n    drunkAtLastHour: drunk,\n    targetPerHour: target / totalActiveHours,\n    expectedWaterSoFar: target / totalActiveHours\n};\n\n// Reset logic for a new day (at 6:00 AM)\nif (currentHour === startHour && tracking.lastHour !== startHour) {\n    tracking = {\n        lastHour: currentHour,\n        drunkAtLastHour: 0,\n        targetPerHour: target / totalActiveHours,\n        expectedWaterSoFar: target / totalActiveHours\n    };\n    flow.set('muteActive', false); // Reset mute for the new day\n}\n\nif (currentHour !== tracking.lastHour && inTimeRange) {\n    let waterDrankLastHour = drunk - tracking.drunkAtLastHour;\n    let acceptableMin = tracking.targetPerHour * 0.8;\n    let acceptableMax = tracking.targetPerHour * 1.2;\n\n    let remainingHours = endHour - currentHour;\n    if (endHour <= startHour && currentHour >= startHour) {\n        remainingHours = (24 - currentHour) + endHour;\n    } else if (endHour <= startHour && currentHour < endHour) {\n        remainingHours = endHour - currentHour;\n    }\n    if (remainingHours < 1) remainingHours = 1;\n\n    if (waterDrankLastHour < acceptableMin || waterDrankLastHour > acceptableMax) {\n        let waterLeft = target - drunk;\n        tracking.targetPerHour = waterLeft / remainingHours;\n        if (tracking.targetPerHour < 0) tracking.targetPerHour = 0;\n    }\n\n    tracking.expectedWaterSoFar += tracking.targetPerHour;\n    tracking.drunkAtLastHour = drunk;\n    tracking.lastHour = currentHour;\n\n    flow.set('waterTracking', tracking);\n}\n\n// Auto-reset \"Mute\" if the user actually drank water\nlet lastDrunkMuteCheck = flow.get('lastDrunkMuteCheck') || 0;\nif (drunk > lastDrunkMuteCheck) {\n    flow.set('muteActive', false); // Unmute!\n    flow.set('lastDrunkMuteCheck', drunk);\n}\n\n// 4. Alert Logic (Respecting the Mute State)\nlet alertData = flow.get('alertData') || { lastAlertHour: -1, waterAtAlert: 0 };\nlet alert = false;\n\nlet isBehind = (temp > 32 && drunk < tracking.expectedWaterSoFar && inTimeRange);\nlet isMuted = flow.get('muteActive') === true; // Check if muted\n\nif (isBehind && !isMuted) {\n    if (alertData.lastAlertHour !== currentHour) {\n        alert = true;\n        alertData.lastAlertHour = currentHour;\n        alertData.waterAtAlert = drunk;\n    } else {\n        let waterDrankSinceAlert = drunk - alertData.waterAtAlert;\n        if (waterDrankSinceAlert < (tracking.targetPerHour * 0.8)) {\n            alert = true; // Still haven't drank enough, keep alerting\n        }\n    }\n} else {\n    if (drunk >= tracking.expectedWaterSoFar) {\n        alertData.lastAlertHour = -1;\n    }\n}\n\nflow.set('alertData', alertData);\n\n// 5. Send Specific Data to Specific Outputs\nlet percent = parseFloat(((drunk / target) * 100).toFixed(1));\nif (percent > 100) percent = 100; // Cap visual UI gauge at 100%\n\nlet msg1 = { payload: (target / 1000).toFixed(2) }; // For Text Node (Liters)\nlet msg2 = { payload: percent };                    // For Gauge Node (Percentage)\nlet msg3 = { alert: alert, payload: alert ? \"1\" : \"0\" }; // For Switch -> Buzzer (\"1\" for ON, \"0\" for OFF)\n\nreturn [msg1, msg2, msg3];",
+        "func": "let user = flow.get('userProfile') || {};\nlet temp = global.get('current_temp') || 25;\nlet drunk = flow.get('waterDrunkToday') || 0;\n\nif (!user.healthStatus) return null;\n\nlet startHour = 6;\nlet endHour = 22;\nlet currentHour = new Date().getHours();\n\nlet inTimeRange = false;\nif (startHour < endHour) {\n    inTimeRange = (currentHour >= startHour && currentHour < endHour);\n} else {\n    inTimeRange = (currentHour >= startHour || currentHour < endHour);\n}\n\nlet target = 0;\nlet ds = parseInt(user.diseases) || 5;\n\nif (user.healthStatus === 'normal') {\n    target = 2500;\n} else {\n    let weight = parseFloat(user.weight);\n    if (!weight || weight <= 0) return null;\n\n    let baseTarget = weight * 35;\n    target = baseTarget;\n\n    if (ds === 5) {\n        target = 2500;\n    } else if (ds === 1) {\n        let urine = parseFloat(user.urine) || 0;\n        target = urine + 500;\n    } else {\n        let age = parseInt(user.age) || 0;\n        if (age >= 30 && age <= 55) target *= 0.95;\n        else if (age > 55) target *= 0.90;\n\n        let heightCm = parseFloat(user.height) || 0;\n        if (heightCm > 0) {\n            let heightM = heightCm / 100;\n            let bmi = weight / (heightM * heightM); \n            if (bmi < 18.5) target *= 1.05;            \n            else if (bmi >= 25 && bmi < 30) target *= 0.95; \n            else if (bmi >= 30) target *= 0.90;        \n        }\n\n        if (ds === 3) target += 500;\n        else if (ds === 2 || ds === 4) target += (baseTarget * 0.20);\n    }\n\n    if (ds !== 1) {\n        if (temp >= 20 && temp <= 25) target *= 1.05;\n        else if (temp >= 26 && temp <= 30) target *= 1.10;\n        else if (temp > 30) target *= 1.15; \n    }\n}\n\nlet totalActiveHours = (endHour > startHour) ? (endHour - startHour) : (24 - startHour + endHour);\nif (totalActiveHours <= 0) totalActiveHours = 16;\n\nlet tracking = flow.get('waterTracking') || {\n    lastHour: currentHour,\n    drunkAtLastHour: drunk,\n    targetPerHour: target / totalActiveHours,\n    expectedWaterSoFar: target / totalActiveHours\n};\n\nif (currentHour === startHour && tracking.lastHour !== startHour) {\n    tracking = {\n        lastHour: currentHour,\n        drunkAtLastHour: 0,\n        targetPerHour: target / totalActiveHours,\n        expectedWaterSoFar: target / totalActiveHours\n    };\n    flow.set('muteActive', false); \n    flow.set('lastDrunkMuteCheck', 0);\n}\n\nif (currentHour !== tracking.lastHour && inTimeRange) {\n    let waterDrankLastHour = drunk - tracking.drunkAtLastHour;\n    let acceptableMin = tracking.targetPerHour * 0.8;\n    let acceptableMax = tracking.targetPerHour * 1.2;\n\n    let remainingHours = endHour - currentHour;\n    if (endHour <= startHour && currentHour >= startHour) {\n        remainingHours = (24 - currentHour) + endHour;\n    } else if (endHour <= startHour && currentHour < endHour) {\n        remainingHours = endHour - currentHour;\n    }\n    if (remainingHours < 1) remainingHours = 1;\n\n    if (waterDrankLastHour < acceptableMin || waterDrankLastHour > acceptableMax) {\n        let waterLeft = target - drunk;\n        tracking.targetPerHour = waterLeft / remainingHours;\n        if (tracking.targetPerHour < 0) tracking.targetPerHour = 0;\n    }\n\n    let hoursPassed = currentHour - startHour;\n    if (hoursPassed < 0) hoursPassed += 24; \n    if (hoursPassed === 0) hoursPassed = 1; \n    \n    tracking.expectedWaterSoFar = tracking.targetPerHour * hoursPassed;\n    \n    tracking.drunkAtLastHour = drunk;\n    tracking.lastHour = currentHour;\n\n    flow.set('waterTracking', tracking);\n}\n\nlet lastDrunkMuteCheck = flow.get('lastDrunkMuteCheck') || 0;\nif (drunk > lastDrunkMuteCheck) {\n    flow.set('muteActive', false); \n    flow.set('lastDrunkMuteCheck', drunk);\n}\n\nlet alertData = flow.get('alertData') || { lastAlertHour: -1, waterAtAlert: 0 };\nlet alert = false;\n\nlet isBehind = (drunk < tracking.expectedWaterSoFar && inTimeRange);\nlet isMuted = flow.get('muteActive') === true; \n\nif (isBehind && !isMuted) {\n    if (alertData.lastAlertHour !== currentHour) {\n        alert = true;\n        alertData.lastAlertHour = currentHour;\n        alertData.waterAtAlert = drunk;\n    } else {\n        let waterDrankSinceAlert = drunk - alertData.waterAtAlert;\n        if (waterDrankSinceAlert < (tracking.targetPerHour * 0.8)) {\n            alert = true; \n        }\n    }\n} else {\n    if (drunk >= tracking.expectedWaterSoFar) {\n        alertData.lastAlertHour = -1;\n    }\n}\n\nflow.set('alertData', alertData);\n\nlet percent = parseFloat(((drunk / target) * 100).toFixed(1));\nif (percent > 100) percent = 100; \n\nlet msg1 = { payload: (target / 1000).toFixed(2) }; \nlet msg2 = { payload: percent };                    \nlet msg3 = { alert: alert, payload: alert ? \"1\" : \"0\" }; \n\nreturn [msg1, msg2, msg3];",
         "outputs": 3,
         "timeout": "",
         "noerr": 0,
@@ -455,20 +455,20 @@
         "y": 280,
         "wires": [
             [
-                "92f76687e35eb9ee"
+                "0da0b5ad6b1d8752"
             ],
             [
-                "16c0d74402e0e44b"
+                "2fa1c27f60849c10"
             ],
             [
-                "7ead31b7abf40f77"
+                "330d9453a35fe296"
             ]
         ]
     },
     {
-        "id": "7ead31b7abf40f77",
+        "id": "330d9453a35fe296",
         "type": "switch",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Trigger Alert?",
         "property": "alert",
         "propertyType": "msg",
@@ -483,14 +483,14 @@
         "y": 320,
         "wires": [
             [
-                "c3d077c640cdf02a"
+                "209e48946563d98c"
             ]
         ]
     },
     {
-        "id": "c3d077c640cdf02a",
+        "id": "209e48946563d98c",
         "type": "mqtt out",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Buzzer Board 2",
         "topic": "room/buzzer",
         "qos": "",
@@ -506,9 +506,9 @@
         "wires": []
     },
     {
-        "id": "d3148d877adbe62b",
+        "id": "634fa97180541fa8",
         "type": "ui_button",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Mute Alarm",
         "group": "ui_group_status",
         "order": 3,
@@ -529,14 +529,14 @@
         "y": 380,
         "wires": [
             [
-                "419eaf99655434fb"
+                "5ea4a3be68b7cce0"
             ]
         ]
     },
     {
-        "id": "419eaf99655434fb",
+        "id": "5ea4a3be68b7cce0",
         "type": "function",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "Set Mute State",
         "func": "flow.set('muteActive', true);\nreturn msg;",
         "outputs": 1,
@@ -549,14 +549,14 @@
         "y": 380,
         "wires": [
             [
-                "c3d077c640cdf02a"
+                "209e48946563d98c"
             ]
         ]
     },
     {
-        "id": "92f76687e35eb9ee",
+        "id": "0da0b5ad6b1d8752",
         "type": "ui_text",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "group": "ui_group_status",
         "order": 1,
         "width": "",
@@ -575,9 +575,9 @@
         "wires": []
     },
     {
-        "id": "16c0d74402e0e44b",
+        "id": "2fa1c27f60849c10",
         "type": "ui_gauge",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "group": "ui_group_status",
         "order": 2,
         "label": "ความคืบหน้า",
@@ -594,9 +594,9 @@
         "wires": []
     },
     {
-        "id": "634a35ac3a8ec476",
+        "id": "85c0f7e612f5c21f",
         "type": "ui_gauge",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "",
         "group": "ui_group_status",
         "order": 4,
@@ -622,9 +622,9 @@
         "wires": []
     },
     {
-        "id": "c8d8c4af862d3f1d",
+        "id": "291d06e4c9be78d5",
         "type": "ui_gauge",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "",
         "group": "ui_group_status",
         "order": 5,
@@ -650,9 +650,9 @@
         "wires": []
     },
     {
-        "id": "4a4088102928992f",
+        "id": "1c5ca576a36d4ee3",
         "type": "inject",
-        "z": "37d810e1272bdb67",
+        "z": "56c675a926d60f6e",
         "name": "เช็คทุก 1 ชั่วโมง",
         "props": [
             {
@@ -670,7 +670,7 @@
         "y": 520,
         "wires": [
             [
-                "fc96bbd8100e2d76"
+                "49fd19ddc9644d7f"
             ]
         ]
     },
